@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 import psycopg2
 
 app = FastAPI()
-favicon_path = './book-stack.png'
+favicon_path = './book-stack.ico'
 
 DATABASE_URL = os.getenv('DATABASE_URL', None)
 print(DATABASE_URL)
