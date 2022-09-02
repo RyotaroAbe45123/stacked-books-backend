@@ -1,61 +1,81 @@
-import os
-from typing import Union
-
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
-import psycopg2
+
+from api.books.crud import *
+from api.stacks.crud import *
+from api.users.crud import *
+
 
 app = FastAPI()
-favicon_path = './book-stack.ico'
-
-DATABASE_URL = os.getenv('DATABASE_URL', None)
-print(DATABASE_URL)
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.get("/users/find")
+def get_one_user(user_id: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(user_id, int): return "Invalid Input Type Error"
+    result = find_user(user_id)
+    return result
 
 @app.get("/users")
-def get_data():
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cur = conn.cursor()
-    table_name = "Users"
-    query = f"SELECT * FROM {table_name}"
-    cur.execute(query)
-    result = cur.fetchall()
-    print(result)
-    cur.close()
-    conn.close()
-    return {"data": f'{result}'}
+def get_all_users():
+    query = "select * FROM Users"
+    result = find_users(query)
+    return result
 
-@app.get("/stacks")
-def get_data():
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cur = conn.cursor()
-    table_name = "Stacks"
-    query = f"SELECT * FROM {table_name}"
-    cur.execute(query)
-    result = cur.fetchall()
-    print(result)
-    cur.close()
-    conn.close()
-    return {"data": f'{result}'}
+@app.post("/users")
+def create_user(name: str):
+    # str以外リクエストされないはずだが、バリデーション
+    if not isinstance(name, str): return "Invalid Input Type Error"
+    create_user_record(name)
+    
+    
+@app.post("/users/delete")
+def delete_user(user_id: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(user_id, int): return "Invalid Input Type Error"
+    delete_user_record(user_id)
+    
 
-@app.get("/books")
-def get_data():
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cur = conn.cursor()
-    table_name = "Books"
-    query = f"SELECT * FROM {table_name}"
-    cur.execute(query)
-    result = cur.fetchall()
-    print(result)
-    cur.close()
-    conn.close()
-    return {"data": f'{result}'}
+@app.post("/stacks")
+def create_stack(user_id: int, isbn: int):
+    if not (isinstance(user_id, int) and isinstance(isbn, int)): return "Invalid Input Type Error"
+    create_stack_record(user_id, isbn)
 
-@app.get("/favicon.ico")
-def favicon():
-    return FileResponse(favicon_path)
+@app.post("/stacks/delete")
+def delete_stack(user_id: int, isbn: int):
+    if not (isinstance(user_id, int) and isinstance(isbn, int)): return "Invalid Input Type Error"
+    delete_stack_record(user_id, isbn)
+
+@app.get("/stacks/find")
+def get_all_stacks_by_user(user_id: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(user_id, int): return "Invalid Input Type Error"
+    result = get_stacks(user_id)
+    return result
+
+@app.get("/stacks/num")
+def get_stacks_num_by_user(user_id: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(user_id, int): return "Invalid Input Type Error"
+    result = get_stacks_num(user_id)
+    return result
+
+
+@app.post("/books")
+def create_books(isbn: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(isbn, int): return "Invalid Input Type Error"
+    create_book_record(isbn)
+
+@app.post("/books/delete")
+def delete_books(isbn: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(isbn, int): return "Invalid Input Type Error"
+    delete_book_record(isbn)
+
+@app.get("/books/find")
+def get_books(user_id: int):
+    # int以外リクエストされないはずだが、バリデーション
+    if not isinstance(user_id, int): return "Invalid Input Type Error"
+    result = get_books_by_user(user_id)
+    return result
 
