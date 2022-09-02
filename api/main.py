@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from api.books.crud import *
-from api.stacks.crud import *
-from api.users.crud import *
+from books.crud import *
+from stacks.crud import *
+from users.crud import *
 
 
 app = FastAPI()
