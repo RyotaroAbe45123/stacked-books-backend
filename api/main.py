@@ -22,12 +22,6 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def main():
-    return {"message": "Hello World"}
-
-app = FastAPI()
-
 
 @app.get("/users/find")
 def get_one_user(user_id: int):
