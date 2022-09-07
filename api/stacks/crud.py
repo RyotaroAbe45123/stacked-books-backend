@@ -1,15 +1,11 @@
 from datetime import datetime, timedelta, timezone
-import os
 from typing import List
 
 import psycopg
 from psycopg.rows import class_row
 from pydantic import BaseModel
 
-
-DATABASE_URL = os.getenv('DATABASE_URL', None)
-assert DATABASE_URL is not None, "Not Found DATABASE_URL"
-
+from ..database import DATABASE_URL
 
 class Stacks(BaseModel):
     userid: int
