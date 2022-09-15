@@ -12,8 +12,6 @@ router = APIRouter()
 # @router.get("/users", response_model=Union[List[schema.User], List[None]])
 @router.get("/users")
 async def read_all_users(authorization: Optional[str] = Header(default=None)):
-    # print(x_token)
-    # print(authorization)
     from auth0.v3.authentication import Users
     import os
     domain = os.getenv("DOMAIN")
