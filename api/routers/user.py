@@ -1,6 +1,6 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 
 import api.schemas.user as schema
 import api.cruds.user as crud
@@ -9,8 +9,19 @@ import api.cruds.user as crud
 router = APIRouter()
 
 
-@router.get("/users", response_model=Union[List[schema.User], List[None]])
-async def read_all_users():
+# @router.get("/users", response_model=Union[List[schema.User], List[None]])
+@router.get("/users")
+async def read_all_users(authorization: Optional[str] = Header(default=None)):
+    # print(x_token)
+    # print(authorization)
+    from auth0.v3.authentication import Users
+    import os
+    domain = os.getenv("DOMAIN")
+    users = Users(domain)
+    print(users)
+    myuser = users.userinfo(authorization)
+    print(myuser.keys())
+    return {"a": myuser["sub"]}
     # return [schema.User(userid=1, name='name1'), schema.User(userid=2, name='name2')]
     return await crud.read_all_users()
 

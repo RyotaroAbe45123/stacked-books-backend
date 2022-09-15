@@ -1,3 +1,10 @@
 fastapi==0.81.0
 psycopg[binary]==3.1
 uvicorn==0.18.3
+
+flask>=2.0.3
+python-dotenv>=0.19.2
+authlib>=1.0
+requests>=2.27.1
+
+auth0-python
