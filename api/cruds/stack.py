@@ -32,14 +32,14 @@ async def read_stack(body: schema.StackRead) -> schema.Stack:
             return obj
 
 
-async def create_stack(body: schema.StackCreate) -> schema.StackCreateResponse:
+async def create_stack(user_id: int, body: schema.StackCreate) -> schema.StackCreateResponse:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.StackCreateResponse)) as acur:
             jst = timezone(timedelta(hours=+9), "JST")
             timestamp = datetime.now(jst).isoformat(timespec="seconds")
             await acur.execute(
                 "INSERT INTO Stacks (UserId, ISBN, TimeStamp) VALUES (%s, %s, %s)",
-                (body.userid, body.isbn, timestamp)
+                (user_id, body.isbn, timestamp)
             )
             await acur.execute(
                 "SELECT * FROM Stacks ORDER BY Stacks.TimeStamp DESC"
