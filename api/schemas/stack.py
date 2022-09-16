@@ -4,7 +4,7 @@ from typing import List, Union
 
 
 class StackBase(BaseModel):
-    userid: int
+    # userid: int
     isbn: int
 
 

@@ -1,9 +1,10 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 
 import api.schemas.stack as schema
 import api.cruds.stack as crud
+from ..utils import get_user_info
 
 
 router = APIRouter()
@@ -17,9 +18,11 @@ async def read_stacks(user_id: int):
 
 
 @router.post("/stack", response_model=schema.StackCreateResponse)
-async def create_stack(body: schema.StackCreate):
-    # from datetime import datetime
-    # return schema.StackCreateResponse(**body.dict(), timestamp=datetime.now())
+async def create_stack(body: schema.StackCreate, token: Optional[str]= Header(default=None)):
+    user_id = get_user_info(token)
+    print(user_id)
+    from datetime import datetime
+    return schema.StackCreateResponse(**body.dict(), timestamp=datetime.now())
     return await crud.create_stack(body)
     
     
