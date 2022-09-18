@@ -37,21 +37,3 @@ async def delete_book(body: schema.BookDelete) -> None:
                 "DELETE FROM Books WHERE Books.ISBN = %s",
                 (body.isbn,)
             )
-
-
-# def delete_book_record(isbn: int):
-#     with psycopg.connect(DATABASE_URL) as conn:
-#         with conn.cursor() as cur:
-#             cur.execute(
-#                 "DELETE FROM Books where Books.ISBN = %s",
-#                 (isbn,)
-#             )
-
-# def get_books_by_user(user_id: int) -> List[Books]:
-#     with psycopg.connect(DATABASE_URL) as conn:
-#         with conn.cursor(row_factory=class_row(Books)) as cur:
-#             cur.execute(
-#                 "SELECT * FROM Stacks LEFT JOIN Books ON Stacks.ISBN = Books.ISBN where Stacks.UserId = %s",
-#                 (user_id,)
-#             )
-#             return cur.fetchall()
