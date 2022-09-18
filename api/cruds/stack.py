@@ -9,6 +9,7 @@ import api.schemas.stack as schema
 
 
 async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]:
+    print(f'u: {user_id}')
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
             await acur.execute(
@@ -19,12 +20,12 @@ async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]
             return obj if obj else [None]
 
 
-async def read_stack(body: schema.StackRead) -> schema.Stack:
+async def read_stack(user_id: int, body: schema.StackRead) -> schema.Stack:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
             await acur.execute(
                 "SELECT * FROM Stacks WHERE Stacks.UserId = %s AND Stacks.ISBN = %s",
-                (body.userid, body.isbn)
+                (user_id, body.isbn)
             )
             obj = await acur.fetchone()
             if obj is None:
@@ -48,10 +49,10 @@ async def create_stack(user_id: int, body: schema.StackCreate) -> schema.StackCr
             return obj
 
 
-async def delete_stack(body: schema.StackDelete) -> None:
+async def delete_stack(user_id: int, body: schema.StackDelete) -> None:
     async with await get_async_connection() as aconn:
         async with aconn.cursor() as acur:
             await acur.execute(
                 "DELETE FROM Stacks WHERE Stacks.UserId = %s AND Stacks.ISBN = %s",
-                (body.userid, body.isbn)
+                (user_id, body.isbn)
             )
