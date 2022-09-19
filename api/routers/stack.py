@@ -22,14 +22,17 @@ async def read_stacks(token: str = Header(default=None)):
 @router.post("/stack", response_model=schema.StackCreateResponse)
 async def create_stack(body: schema.StackCreate, token: str = Header(default=None)):
     user_id = get_user_info(token)
-    try:
-        book = await crud_book.read_book(body.isbn)
+    book = await crud_book.read_book(body.isbn)
+    if book is not None:
         print(f'Book Found: {book}')
-    except HTTPException:
+    else:
         print("Book Not Found. So register it.")
-        book_info = search_book_info(body.isbn)
-        print(f'Book Info: {book_info}')
-        await crud_book.create_book(book_info)
+        try:
+            book_info = search_book_info(body.isbn)
+            print(f'Book Info: {book_info}')
+            await crud_book.create_book(book_info)
+        except HTTPException as e:
+            raise e
     # from datetime import datetime
     # return schema.StackCreateResponse(user_id=user_id, **body.dict(), timestamp=datetime.now())
     return await crud_stack.create_stack(user_id, body)
