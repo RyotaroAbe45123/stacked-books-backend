@@ -15,8 +15,8 @@ async def read_book(isbn: int) -> Union[schema.Book, None]:
                 (isbn,)
             )
             obj = await acur.fetchone()
-            if obj is None:
-                raise HTTPException(status_code=404, detail='Book Not Found')
+            # if obj is None:
+            #     raise HTTPException(status_code=404, detail='Book Not Found')
             return obj
 
 
