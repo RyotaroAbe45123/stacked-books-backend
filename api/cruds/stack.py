@@ -9,7 +9,6 @@ import api.schemas.stack as schema
 
 
 async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]:
-    print(f'u: {user_id}')
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
             await acur.execute(
