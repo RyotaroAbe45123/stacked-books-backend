@@ -7,6 +7,8 @@ class BookBase(BaseModel):
 
 
 class Book(BookBase):
+    price: int
+    pages: int
     author: str
     publisher: str
     title: str
@@ -17,6 +19,8 @@ class BookRead(BookBase):
 
 
 class BookCreate(BookBase):
+    price: int
+    pages: int
     author: str
     publisher: str
     title: str
