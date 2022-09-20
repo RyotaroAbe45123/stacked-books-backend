@@ -9,25 +9,25 @@ import api.cruds.user as crud
 router = APIRouter()
 
 
-@router.get("/users", response_model=Union[List[schema.User], List[None]])
+# @router.get("/users", response_model=Union[List[schema.User], List[None]])
 async def read_all_users():
     # return [schema.User(userid=1, name='name1'), schema.User(userid=2, name='name2')]
     return await crud.read_all_users()
 
 
-@router.get("/user", response_model=schema.User)
+# @router.get("/user", response_model=schema.User)
 async def read_user(user_id: int):
     # return User(userid=user_id, name='name')
     return await crud.read_user(user_id)
 
 
-@router.post("/user", response_model=schema.UserCreateResponse)
+# @router.post("/user", response_model=schema.UserCreateResponse)
 async def create_user(body: schema.UserCreate):
     # return schema.UserCreateResponse(userid=1, **body.dict())
     return await crud.create_user(body)
     
 
-@router.put("/user", response_model=schema.UserCreateResponse)
+# @router.put("/user", response_model=schema.UserCreateResponse)
 async def update_user(user_id: int, body: schema.UserCreate):
     user = await crud.read_user(user_id)
     if user is None:
@@ -36,7 +36,7 @@ async def update_user(user_id: int, body: schema.UserCreate):
     return await crud.update_user(user_id, body)
     
     
-@router.delete("/user", response_model=None)
+# @router.delete("/user", response_model=None)
 async def delete_user(user_id: int):
     user = await crud.read_user(user_id)
     if user is None:
