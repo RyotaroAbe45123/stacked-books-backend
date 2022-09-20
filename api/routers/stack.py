@@ -11,7 +11,7 @@ from ..utils import get_user_info, search_book_info
 router = APIRouter()
 
 
-@router.get("/stacks", response_model=Union[List[schema.Stack], List[None]])
+@router.get("/stacks", tags=["stack"], response_model=Union[List[schema.Stack], List[None]])
 async def read_stacks(token: str = Header(default=None)):
     user_id = get_user_info(token)
     # from datetime import datetime
@@ -19,7 +19,7 @@ async def read_stacks(token: str = Header(default=None)):
     return await crud_stack.read_all_stacks(user_id)
 
 
-@router.post("/stack", response_model=schema.StackCreateResponse)
+@router.post("/stack", tags=["stack"], response_model=schema.StackCreateResponse)
 async def create_stack(body: schema.StackCreate, token: str = Header(default=None)):
     user_id = get_user_info(token)
     book = await crud_book.read_book(body.isbn)
@@ -38,7 +38,7 @@ async def create_stack(body: schema.StackCreate, token: str = Header(default=Non
     return await crud_stack.create_stack(user_id, body)
     
     
-@router.delete("/stack", response_model=None)
+@router.delete("/stack", tags=["stack"], response_model=None)
 async def delete_stack(body: schema.StackDelete, token: str = Header(default=None)):
     user_id = get_user_info(token)
     stack = await crud_stack.read_stack(user_id, body)
