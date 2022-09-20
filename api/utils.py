@@ -117,6 +117,11 @@ def search_pages(text: str) -> Union[str, None]:
 
 
 def search_price(text: str) -> Union[str, None]:
-    if not "円" in text: return None
-    return text.replace("円", "")
+    # textは、数字のみ or 数字+円
+    try:
+        price = int(text)
+        return price
+    except ValueError:
+        if not "円" in text: return None
+        else: return text.replace("円", "")
 
