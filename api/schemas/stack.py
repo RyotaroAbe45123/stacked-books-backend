@@ -3,6 +3,11 @@ from pydantic import BaseModel
 from typing import List, Union
 
 
+class Stacks(BaseModel):
+    timestamp: datetime
+    price: int
+    pages: int
+
 class StackBase(BaseModel):
     isbn: int
 
