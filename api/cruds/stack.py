@@ -10,9 +10,9 @@ import api.schemas.stack as schema
 
 async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]:
     async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
+        async with aconn.cursor(row_factory=class_row(schema.Stacks)) as acur:
             await acur.execute(
-                "SELECT * FROM Stacks WHERE Stacks.UserId = %s",
+                "SELECT timestamp, price, pages FROM Stacks AS S LEFT JOIN Books AS B ON S.ISBN = B.ISBN WHERE S.UserId = %s",
                 (user_id,)
             )
             obj = await acur.fetchall()

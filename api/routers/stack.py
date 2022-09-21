@@ -11,7 +11,7 @@ from ..utils import get_user_info, search_book_info
 router = APIRouter()
 
 
-@router.get("/stacks", tags=["stack"], response_model=Union[List[schema.Stack], List[None]])
+@router.get("/stacks", tags=["stack"], response_model=Union[List[schema.Stacks], List[None]])
 async def read_stacks(token: str = Header(default=None)):
     user_id = get_user_info(token)
     # from datetime import datetime
