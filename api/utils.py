@@ -76,6 +76,7 @@ def search_book_info(isbn: int):
         if price is not None:
             break
     assert price is not None, "price is not found."
+    print(price)
 
     ns = {
         "dc": "http://purl.org/dc/elements/1.1/"
@@ -117,11 +118,12 @@ def search_pages(text: str) -> Union[str, None]:
 
 
 def search_price(text: str) -> Union[str, None]:
+    print(text)
     # textは、数字のみ or 数字+円
     try:
         price = int(text)
         return price
     except ValueError:
         if not "円" in text: return None
-        else: return text.replace("円", "")
+        else: return text.replace("円", "").replace("+税", "")
 
