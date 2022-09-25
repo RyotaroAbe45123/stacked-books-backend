@@ -9,10 +9,7 @@ app.include_router(user.router)
 app.include_router(stack.router)
 app.include_router(book.router)
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
