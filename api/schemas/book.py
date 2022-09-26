@@ -6,7 +6,7 @@ class BookBase(BaseModel):
     isbn: int
 
 
-class Book(BookBase):
+class BookRead(BookBase):
     price: int
     pages: int
     author: str
@@ -14,8 +14,8 @@ class Book(BookBase):
     title: str
 
 
-class BookRead(BookBase):
-    pass
+class BookImage(BaseModel):
+    image: bytes
 
 
 class BookCreate(BookBase):
@@ -30,5 +30,5 @@ class BookCreateResponse(BookCreate):
     pass
 
 
-class BookDelete(BookBase):
-    pass
+# class BookDelete(BookBase):
+#     pass

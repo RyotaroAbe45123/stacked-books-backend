@@ -7,9 +7,20 @@ from ..database import get_async_connection
 import api.schemas.book as schema
 
 
-async def read_book(isbn: int) -> Union[schema.Book, None]:
+async def read_all_books(user_id: int) -> Union[List[schema.BookRead], List[None]]:
     async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.Book)) as acur:
+        async with aconn.cursor(row_factory=class_row(schema.BookRead)) as acur:
+            await acur.execute(
+                "SELECT * FROM Stacks AS S LEFT JOIN Books AS B ON S.ISBN = B.ISBN WHERE S.UserId = %s",
+                (user_id,)
+            )
+            obj = await acur.fetchall()
+            return obj if obj else [None]
+
+
+async def read_book(isbn: int) -> Union[schema.BookRead, None]:
+    async with await get_async_connection() as aconn:
+        async with aconn.cursor(row_factory=class_row(schema.BookRead)) as acur:
             await acur.execute(
                 "SELECT * FROM Books WHERE Books.ISBN = %s",
                 (isbn,)
@@ -30,10 +41,10 @@ async def create_book(body: schema.BookCreate) -> schema.BookCreateResponse:
             return body
 
 
-async def delete_book(body: schema.BookDelete) -> None:
-    async with await get_async_connection() as aconn:
-        async with aconn.cursor() as acur:
-            await acur.execute(
-                "DELETE FROM Books WHERE Books.ISBN = %s",
-                (body.isbn,)
-            )
+# async def delete_book(body: schema.BookDelete) -> None:
+#     async with await get_async_connection() as aconn:
+#         async with aconn.cursor() as acur:
+#             await acur.execute(
+#                 "DELETE FROM Books WHERE Books.ISBN = %s",
+#                 (body.isbn,)
+#             )
