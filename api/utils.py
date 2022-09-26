@@ -1,3 +1,4 @@
+import base64
 import os
 from typing import Union
 
@@ -13,8 +14,9 @@ import api.schemas.book as book_schema
 DOMAIN = os.getenv("DOMAIN")
 assert DOMAIN is not None, "Domain Not Found"
 
-BOOK_ENDPOINT = 'https://iss.ndl.go.jp/api/sru'
+# BOOK_ENDPOINT = 'https://iss.ndl.go.jp/api/sru'
 BOOK_ENDPOINT = "https://iss.ndl.go.jp/api/opensearch"
+BOOK_IMAGE_ENDPOINT = "https://iss.ndl.go.jp/thumbnail/"
 
 
 def get_user_info(token: str):
@@ -30,34 +32,12 @@ def get_user_info(token: str):
     return user_id
 
 
-def _search_book_info(isbn: int):
-    params = {
-        'operation': 'searchRetrieve',
-        'query': f'isbn="{isbn}"',
-        'recordPacking': 'xml'
-    }
-
-    response = requests.get(BOOK_ENDPOINT, params=params)
-    
-    root = ET.fromstring(response.text)
-    ns = {
-        "dc": "http://purl.org/dc/elements/1.1/"
-    }
-    author = validate_xml(root, "creator", ns)
-    title = validate_xml(root, "title", ns)
-    publisher = validate_xml(root, "publisher", ns)
-    return book_schema.BookCreate(
-        isbn=isbn,
-        author=author,
-        title=title,
-        publisher=publisher
-        )
-
 def validate_xml(root: ET.Element, target: str, ns: dict):
     response = root.find(f".//dc:{target}", ns)
     if response is None:
         raise HTTPException(status_code=404, detail='Book Not Found From ISBN')
     return response.text
+
 
 def search_book_info(isbn: int):
     params = {
@@ -127,3 +107,11 @@ def search_price(text: str) -> Union[str, None]:
         if not "円" in text: return None
         else: return text.replace("円", "").replace("+税", "")
 
+async def search_book_image(isbn: int) -> bytes:
+    response = requests.get(
+        f"{BOOK_IMAGE_ENDPOINT}{isbn}"
+    )
+    if response.status_code != 200:
+        return None
+    encoded_image = base64.b64encode(response.content)
+    return {"image": encoded_image}
