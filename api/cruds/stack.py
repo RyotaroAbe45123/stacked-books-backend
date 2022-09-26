@@ -8,9 +8,9 @@ from ..database import get_async_connection
 import api.schemas.stack as schema
 
 
-async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]:
+async def read_all_stacks(user_id: int) -> Union[List[schema.StackRead], List[None]]:
     async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.Stacks)) as acur:
+        async with aconn.cursor(row_factory=class_row(schema.StackRead)) as acur:
             await acur.execute(
                 "SELECT timestamp, price, pages FROM Stacks AS S LEFT JOIN Books AS B ON S.ISBN = B.ISBN WHERE S.UserId = %s",
                 (user_id,)
@@ -19,17 +19,17 @@ async def read_all_stacks(user_id: int) -> Union[List[schema.Stack], List[None]]
             return obj if obj else [None]
 
 
-async def read_stack(user_id: int, body: schema.StackRead) -> schema.Stack:
-    async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
-            await acur.execute(
-                "SELECT * FROM Stacks WHERE Stacks.UserId = %s AND Stacks.ISBN = %s",
-                (user_id, body.isbn)
-            )
-            obj = await acur.fetchone()
-            if obj is None:
-                raise HTTPException(status_code=404, detail='User Not Found')
-            return obj
+# async def read_stack(user_id: int, body: schema.StackRead) -> schema.Stack:
+#     async with await get_async_connection() as aconn:
+#         async with aconn.cursor(row_factory=class_row(schema.Stack)) as acur:
+#             await acur.execute(
+#                 "SELECT * FROM Stacks WHERE Stacks.UserId = %s AND Stacks.ISBN = %s",
+#                 (user_id, body.isbn)
+#             )
+#             obj = await acur.fetchone()
+#             if obj is None:
+#                 raise HTTPException(status_code=404, detail='User Not Found')
+#             return obj
 
 
 async def create_stack(user_id: int, body: schema.StackCreate) -> schema.StackCreateResponse:
