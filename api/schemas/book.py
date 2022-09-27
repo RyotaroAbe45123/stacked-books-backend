@@ -14,10 +14,6 @@ class BookRead(BookBase):
     title: str
 
 
-class BookImage(BaseModel):
-    image: bytes
-
-
 class BookCreate(BookBase):
     price: int
     pages: int

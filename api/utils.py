@@ -14,9 +14,7 @@ import api.schemas.book as book_schema
 DOMAIN = os.getenv("DOMAIN")
 assert DOMAIN is not None, "Domain Not Found"
 
-# BOOK_ENDPOINT = 'https://iss.ndl.go.jp/api/sru'
 BOOK_ENDPOINT = "https://iss.ndl.go.jp/api/opensearch"
-BOOK_IMAGE_ENDPOINT = "https://iss.ndl.go.jp/thumbnail/"
 
 
 def get_user_info(token: str):
@@ -98,7 +96,6 @@ def search_pages(text: str) -> Union[str, None]:
 
 
 def search_price(text: str) -> Union[str, None]:
-    print(text)
     # textは、数字のみ or 数字+円
     try:
         price = int(text)
@@ -107,11 +104,3 @@ def search_price(text: str) -> Union[str, None]:
         if not "円" in text: return None
         else: return text.replace("円", "").replace("+税", "")
 
-async def search_book_image(isbn: int) -> bytes:
-    response = requests.get(
-        f"{BOOK_IMAGE_ENDPOINT}{isbn}"
-    )
-    if response.status_code != 200:
-        return None
-    encoded_image = base64.b64encode(response.content)
-    return {"image": encoded_image}
