@@ -9,6 +9,7 @@ class StackBase(BaseModel):
 
 class StackRead(BaseModel):
     timestamp: datetime
+    title: str
     price: int
     pages: int
 
