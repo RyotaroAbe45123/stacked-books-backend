@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Union
 
@@ -6,12 +7,21 @@ class BookBase(BaseModel):
     isbn: int
 
 
-class BookRead(BookBase):
+class BooksReadResponse(BookBase):
     price: int
     pages: int
     author: str
     publisher: str
     title: str
+
+
+class BookReadResponse(BookBase):
+    price: int
+    pages: int
+    author: str
+    publisher: str
+    title: str
+    subjects: List[str]
 
 
 class BookCreate(BookBase):
@@ -24,7 +34,3 @@ class BookCreate(BookBase):
 
 class BookCreateResponse(BookCreate):
     pass
-
-
-# class BookDelete(BookBase):
-#     pass

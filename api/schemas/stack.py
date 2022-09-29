@@ -7,19 +7,15 @@ class StackBase(BaseModel):
     isbn: int
 
 
-class StackRead(BaseModel):
+class StacksReadResponse(BaseModel):
     timestamp: datetime
     title: str
     price: int
     pages: int
 
 
-# class Stack(StackBase):
-#     timestamp: datetime
-
-
-# class StackRead(StackBase):
-#     pass
+class StackReadResponse(StackBase):
+    timestamp: datetime
 
 
 class StackCreate(StackBase):
