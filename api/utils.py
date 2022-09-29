@@ -8,6 +8,7 @@ from fastapi import HTTPException
 import requests
 import xml.etree.ElementTree as ET
 
+import api.cruds.subject as subject_crud
 import api.schemas.book as book_schema
 
 
@@ -37,7 +38,7 @@ def validate_xml(root: ET.Element, target: str, ns: dict):
     return response.text
 
 
-def search_book_info(isbn: int):
+async def search_book_info(isbn: int):
     params = {
         "isbn": isbn
     }
@@ -54,7 +55,6 @@ def search_book_info(isbn: int):
         if price is not None:
             break
     assert price is not None, "price is not found."
-    print(price)
 
     ns = {
         "dc": "http://purl.org/dc/elements/1.1/"
@@ -65,6 +65,17 @@ def search_book_info(isbn: int):
         if pages is not None:
             break
     assert pages is not None, "pages is not found."
+
+    subject_list = []
+    for i in root.findall(".//dc:subject", ns):
+        if not i.attrib:
+            subject_list.append(i.text.replace(" ", ""))
+    for subject in set(subject_list):
+        subjects = await subject_crud.read_subjects(isbn)
+        subjects = [subject[0] for subject in subjects]
+        print(subjects)
+        if subject not in subjects:
+            await subject_crud.create_subject(isbn, subject)
 
     author = None
     for i in root.iter("author"):
