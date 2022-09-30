@@ -7,15 +7,18 @@ from ..database import get_async_connection
 import api.schemas.book as schema
 
 
-async def read_all_books(user_id: int) -> Union[List[schema.BooksReadResponse], List[None]]:
+async def read_all_books(user_id: int, pageSize: int, offset: int) -> Union[List[schema.BooksReadResponse], List[None]]:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.BooksReadResponse)) as acur:
             await acur.execute(
-                "SELECT S.isbn, author, publisher, title, price, pages \
+                "SELECT S.ISBN, author, publisher, title, price, pages \
                     FROM Stacks AS S \
                         LEFT JOIN Books AS B ON S.ISBN = B.ISBN \
-                            WHERE S.UserId = %s",
-                (user_id,)
+                        WHERE S.UserId = %s \
+                            ORDER BY TimeStamp desc \
+                            LIMIT %s \
+                            OFFSET %s",
+                (user_id, pageSize, offset)
             )
             obj = await acur.fetchall()
             return obj if obj else [None]
