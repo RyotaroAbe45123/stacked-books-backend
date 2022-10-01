@@ -16,10 +16,6 @@ class BooksReadResponse(BookBase):
 
 class AllBooksReadResponse(BaseModel):
     data: dict
-    # data: {
-    #     "books": List[BooksReadResponse],
-    #     "allBooks": int
-    # }
 
 
 class BookReadResponse(BookBase):
