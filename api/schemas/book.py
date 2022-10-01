@@ -14,6 +14,9 @@ class BooksReadResponse(BookBase):
     publisher: str
     title: str
 
+class AllBooksReadResponse(BaseModel):
+    data: dict
+
 
 class BookReadResponse(BookBase):
     price: int
@@ -21,7 +24,7 @@ class BookReadResponse(BookBase):
     author: str
     publisher: str
     title: str
-    subjects: List[str]
+    subjects: Union[List[str], None]
 
 
 class BookCreate(BookBase):

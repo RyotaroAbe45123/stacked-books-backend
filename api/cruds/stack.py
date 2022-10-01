@@ -8,7 +8,7 @@ from ..database import get_async_connection
 import api.schemas.stack as schema
 
 
-async def read_all_stacks(user_id: int) -> Union[List[schema.StacksReadResponse], List[None]]:
+async def read_all_stacks(user_id: int) -> Union[List[schema.StacksReadResponse], List]:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.StacksReadResponse)) as acur:
             await acur.execute(
@@ -16,7 +16,7 @@ async def read_all_stacks(user_id: int) -> Union[List[schema.StacksReadResponse]
                 (user_id,)
             )
             obj = await acur.fetchall()
-            return obj if obj else [None]
+            return obj if obj else []
 
 
 async def read_stack(user_id: int, isbn: int) -> schema.StackReadResponse:
