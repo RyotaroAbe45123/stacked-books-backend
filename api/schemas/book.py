@@ -28,7 +28,7 @@ class BookReadResponse(BookBase):
     author: str
     publisher: str
     title: str
-    subjects: List[str]
+    subjects: Union[List[str], None]
 
 
 class BookCreate(BookBase):
