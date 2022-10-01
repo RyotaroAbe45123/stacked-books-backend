@@ -70,10 +70,10 @@ async def search_book_info(isbn: int):
     for i in root.findall(".//dc:subject", ns):
         if not i.attrib:
             subject_list.append(i.text.replace(" ", ""))
+    print(set(subject_list))
     for subject in set(subject_list):
         subjects = await subject_crud.read_subjects(isbn)
-        subjects = [subject[0] for subject in subjects]
-        print(subjects)
+        subjects = [subject.subject for subject in subjects]
         if subject not in subjects:
             await subject_crud.create_subject(isbn, subject)
 
