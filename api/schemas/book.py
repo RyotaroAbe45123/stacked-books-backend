@@ -14,6 +14,13 @@ class BooksReadResponse(BookBase):
     publisher: str
     title: str
 
+class AllBooksReadResponse(BaseModel):
+    data: dict
+    # data: {
+    #     "books": List[BooksReadResponse],
+    #     "allBooks": int
+    # }
+
 
 class BookReadResponse(BookBase):
     price: int
