@@ -1,5 +1,7 @@
 from typing import List, Union
 
+from psycopg.rows import class_row
+
 import api.schemas.subject as schema
 from ..database import get_async_connection
 
