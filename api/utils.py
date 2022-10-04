@@ -105,13 +105,13 @@ def search_pages(text: str) -> Union[str, None]:
     if " " not in text.split("p")[0]: return text.split("p")[0]
     else: return text.split("p")[0].split(" ")[-1]
 
-
-def search_price(text: str) -> Union[str, None]:
-    # textは、数字のみ or 数字+円
+def return_can_be_converted_int(string: str) -> Union[int, None]:
     try:
-        price = int(text)
-        return price
+        return int(string)
     except ValueError:
-        if not "円" in text: return None
-        else: return text.replace("円", "").replace("+税", "")
+        return None
 
+def search_price(text: str) -> Union[int, None]:
+    # textは、数字のみ or 数字+円
+    converted_list = [str(return_can_be_converted_int(i)) for i in text if return_can_be_converted_int(i) is not None]
+    return int("".join(converted_list)) if converted_list else None
