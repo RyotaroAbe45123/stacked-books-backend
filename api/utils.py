@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 import api.cruds.subject as subject_crud
 import api.schemas.book as book_schema
+from api.config import fake_user_id
 
 
 DOMAIN = os.getenv("DOMAIN")
@@ -18,7 +19,8 @@ assert DOMAIN is not None, "Domain Not Found"
 BOOK_ENDPOINT = "https://iss.ndl.go.jp/api/opensearch"
 
 
-def get_user_info(token: str):
+def get_user_info(token: str, is_local: bool):
+    if is_local is not None: return fake_user_id
     users = Users(DOMAIN)
     try:
         user = users.userinfo(token)
