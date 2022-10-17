@@ -55,7 +55,7 @@ async def create_book(body: schema.BookCreate) -> schema.BookCreateResponse:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.BookCreateResponse)) as acur:
             await acur.execute(
-                "INSERT INTO Books VALUES (%s, %s, %s, %s, %s, %s)",
-                (body.isbn, body.author, body.publisher, body.title, body.price, body.pages)
+                "insert into books values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (body.isbn, body.publisher, body.title, body.price, body.pages, body.c_code, body.category_code, body.publish_date, bool(body.has_image))
             )
             return body
