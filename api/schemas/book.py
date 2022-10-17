@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from pydantic import BaseModel
 from typing import List, Union
 
@@ -28,11 +28,14 @@ class BookReadResponse(BookBase):
 
 
 class BookCreate(BookBase):
-    price: int
-    pages: int
-    author: str
-    publisher: str
     title: str
+    pages: int
+    c_code: int
+    category_code: int
+    has_image: bool
+    publisher: str
+    publish_date: date
+    price: int
 
 
 class BookCreateResponse(BookCreate):

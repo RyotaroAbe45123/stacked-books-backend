@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 import api.cruds.subject as subject_crud
 import api.schemas.book as book_schema
+from api.config import fake_user_id
 
 
 DOMAIN = os.getenv("DOMAIN")
@@ -18,7 +19,8 @@ assert DOMAIN is not None, "Domain Not Found"
 BOOK_ENDPOINT = "https://iss.ndl.go.jp/api/opensearch"
 
 
-def get_user_info(token: str):
+def get_user_info(token: str, is_local: bool):
+    if is_local is not None: return fake_user_id
     users = Users(DOMAIN)
     try:
         user = users.userinfo(token)
@@ -115,3 +117,62 @@ def search_price(text: str) -> Union[int, None]:
     # textは、数字のみ or 数字+円
     converted_list = [str(return_can_be_converted_int(i)) for i in text if return_can_be_converted_int(i) is not None]
     return int("".join(converted_list)) if converted_list else None
+
+class Book:
+    def __init__(self, isbn: int) -> None:
+        self.isbn = isbn
+        self.publisher = None
+        self.publish_date = None
+        self.title = None
+        self.price = None
+        self.pages = None
+        self.c_code = None
+        self.category_code = None
+        self.has_image = None
+        self.authors = None
+        self.subjects = None
+    
+    def search(self):
+        params = {
+            "isbn": self.isbn
+        }
+        end = "https://api.openbd.jp/v1/get"
+        response = requests.get(end, params=params)
+        # print(response.json())
+        book_info_dict = response.json()[0]
+        import json
+        # with open('tmp.json', 'w') as f:
+        #     json.dump(book_info_dict, f, ensure_ascii=False)
+        
+        self.extract_info(book_info_dict)
+
+    def extract_info(self, data: dict):
+        self.title = data["onix"]["DescriptiveDetail"]["TitleDetail"]["TitleElement"]["TitleText"]["content"]
+
+        self.authors = data["onix"]["DescriptiveDetail"]["Contributor"]
+        self.authors = [author["PersonName"]["content"] for author in self.authors]
+
+        self.pages = data["onix"]["DescriptiveDetail"]["Extent"][0]["ExtentValue"]
+
+        self.c_code = data["onix"]["DescriptiveDetail"]["Subject"][0]["SubjectCode"]
+        self.category_code = data["onix"]["DescriptiveDetail"]["Subject"][1]["SubjectCode"]
+        self.subjects = data["onix"]["DescriptiveDetail"]["Subject"][2]["SubjectHeadingText"]
+        self.subjects = self.subjects.split(" ")
+        self.subjects = [subject for subject in self.subjects]
+
+        try:
+            self.has_image = data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"]
+            self.has_image = True
+        except:
+            print('book image not found')
+            self.has_image = False
+
+        self.publisher = data["onix"]["PublishingDetail"]["Imprint"]["ImprintName"]
+        self.publish_date = data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"]
+
+        self.price = data["onix"]["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+
+        self.cover = data["summary"]["cover"]
+
+        print(self.__dict__)
+        return None

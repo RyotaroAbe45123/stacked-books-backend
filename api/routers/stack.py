@@ -1,3 +1,4 @@
+import os
 from typing import List, Union, Optional
 
 from fastapi import APIRouter, HTTPException, Header
@@ -13,7 +14,7 @@ router = APIRouter()
 
 @router.get("/stacks", tags=["stack"], response_model=Union[List[schema.StacksReadResponse], List[None]])
 async def read_stacks(token: str = Header(default=None)):
-    user_id = get_user_info(token)
+    user_id = get_user_info(token, os.getenv("IS_LOCAL"))
     # from datetime import datetime
     # return [schema.Stack(userid=1, isbn=123, timestamp=datetime.now()), schema.Stack(userid=1, isbn=456, timestamp=datetime.now())]
     return await crud_stack.read_all_stacks(user_id)
