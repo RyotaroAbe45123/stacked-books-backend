@@ -1,5 +1,5 @@
 import os
-from typing import List, Union, Optional
+from typing import List, Union
 
 from fastapi import APIRouter, HTTPException, Header
 
@@ -17,12 +17,10 @@ router = APIRouter()
 @router.get("/stacks", tags=["stack"], response_model=Union[List[schema.StacksReadResponse], List[None]])
 async def read_stacks(token: str = Header(default=None)):
     user_id = get_user_info(token, os.getenv("IS_LOCAL"))
-    # from datetime import datetime
-    # return [schema.Stack(userid=1, isbn=123, timestamp=datetime.now()), schema.Stack(userid=1, isbn=456, timestamp=datetime.now())]
     return await crud_stack.read_all_stacks(user_id)
 
 
-@router.post("/stack", tags=["stack"], response_model=Union[schema.StackCreateResponse, None])
+@router.post("/stack", tags=["stack"], response_model=None)
 async def create_stack(body: schema.StackCreate, token: str = Header(default=None)):
     user_id = get_user_info(token, os.getenv("IS_LOCAL"))
     stack = await crud_stack.read_stack(user_id, body.isbn)
@@ -52,5 +50,4 @@ async def delete_stack(body: schema.StackDelete, token: str = Header(default=Non
     stack = await crud_stack.read_stack(user_id, body.isbn)
     if stack is None:
         raise HTTPException(status_code=404, detail="Stack Not Found")
-    # return None
     return await crud_stack.delete_stack(user_id, body)
