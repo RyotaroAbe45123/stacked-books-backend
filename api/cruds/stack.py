@@ -19,37 +19,30 @@ async def read_all_stacks(user_id: int) -> Union[List[schema.StacksReadResponse]
                                 ORDER BY timestamp DESC",
                 (user_id,)
             )
+            return await acur.fetchall()
             obj = await acur.fetchall()
             return obj if obj else []
 
 
-async def read_stack(user_id: int, isbn: int) -> schema.StackReadResponse:
+async def read_stack(user_id: int, isbn: int) -> Union[schema.StackReadResponse, None]:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.StackReadResponse)) as acur:
             await acur.execute(
                 "SELECT isbn, timestamp FROM Stacks WHERE Stacks.UserId = %s AND Stacks.ISBN = %s",
                 (user_id, isbn)
             )
-            obj = await acur.fetchone()
-            if obj is None:
-                raise HTTPException(status_code=404, detail='Stack Not Found')
-            return obj
+            return await acur.fetchone()
 
 
-async def create_stack(user_id: int, body: schema.StackCreate) -> schema.StackCreateResponse:
+async def create_stack(user_id: int, body: schema.StackCreate) -> None:
     async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.StackCreateResponse)) as acur:
+        async with aconn.cursor() as acur:
             jst = timezone(timedelta(hours=+9), "JST")
             timestamp = datetime.now(jst).isoformat(timespec="seconds")
             await acur.execute(
                 "INSERT INTO Stacks (UserId, ISBN, TimeStamp) VALUES (%s, %s, %s)",
                 (user_id, body.isbn, timestamp)
             )
-            await acur.execute(
-                "SELECT * FROM Stacks ORDER BY Stacks.TimeStamp DESC"
-            )
-            obj = await acur.fetchone()
-            return obj
 
 
 async def delete_stack(user_id: int, body: schema.StackDelete) -> None:
