@@ -45,17 +45,13 @@ async def read_book(isbn: int) -> Union[schema.BookReadResponse, None]:
                 "SELECT * FROM Books WHERE Books.ISBN = %s",
                 (isbn,)
             )
-            obj = await acur.fetchone()
-            # if obj is None:
-            #     raise HTTPException(status_code=404, detail='Book Not Found')
-            return obj
+            return await acur.fetchone()
 
 
-async def create_book(body: schema.BookCreate) -> schema.BookCreateResponse:
+async def create_book(body: schema.BookCreate) -> None:
     async with await get_async_connection() as aconn:
-        async with aconn.cursor(row_factory=class_row(schema.BookCreateResponse)) as acur:
+        async with aconn.cursor() as acur:
             await acur.execute(
-                "insert into books values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (body.isbn, body.publisher, body.title, body.price, body.pages, body.c_code, body.category_code, body.publish_date, bool(body.has_image))
+                "INSERT INTO Books values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (body.isbn, body.publisher, body.title, body.price, body.pages, body.c_code, body.category_code, body.publish_date, body.has_image)
             )
-            return body

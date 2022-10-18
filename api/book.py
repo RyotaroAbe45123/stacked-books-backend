@@ -48,7 +48,6 @@ class Book:
             self.has_image = data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"]
             self.has_image = True
         except:
-            print('book image not found')
             self.has_image = False
 
         self.publisher = data["onix"]["PublishingDetail"]["Imprint"]["ImprintName"]
