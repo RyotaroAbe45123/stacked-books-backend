@@ -25,6 +25,13 @@ class Book:
         book_info_dict = response.json()[0]
         self.extract_info(book_info_dict)
 
+    def search_subjects(self, subject_list: list) -> list:
+        subject_list = subject_list.split(" ")
+        if len(subject_list) == 1:
+            subject_list = subject_list[0].split(";")
+        return [subject for subject in subject_list]
+
+
     def extract_info(self, data: dict):
         self.title = data["onix"]["DescriptiveDetail"]["TitleDetail"]["TitleElement"]["TitleText"]["content"]
 
@@ -41,13 +48,11 @@ class Book:
                 self.category_code = j["SubjectCode"]
             elif i == 2:
                 self.subjects = j["SubjectHeadingText"]
-                self.subjects = self.subjects.split(" ")
-                self.subjects = [subject for subject in self.subjects]
+                self.subjects = self.search_subjects(self.subjects)
 
         try:
-            self.has_image = data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"]
-            self.has_image = True
-        except:
+            self.has_image = bool(data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"])
+        except KeyError:
             self.has_image = False
 
         self.publisher = data["onix"]["PublishingDetail"]["Imprint"]["ImprintName"]
