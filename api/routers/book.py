@@ -1,20 +1,33 @@
+import os
 from typing import List, Union
 
 from fastapi import APIRouter, HTTPException, Header
 
 import api.schemas.book as schema
-import api.cruds.book as crud
+import api.cruds.book as crud_book
+import api.cruds.author as crud_author
+import api.cruds.subject as crud_subject
 from ..utils import get_user_info
 
 
 router = APIRouter()
 
 
+def reshape_book(books, authors: list) -> dict:
+    result_dict_list = []
+    for book in books:
+        tmp_authors = [author.author_name for author in authors if author.isbn == book.isbn]
+        tmp_dict = dict(**book.dict(), authors=tmp_authors)
+        result_dict_list.append(tmp_dict)
+    return result_dict_list
+
 @router.get("/books", tags=["book"], response_model=schema.AllBooksReadResponse)
 async def read_books(pageSize: int = 3, offset: int = 0, token: str = Header(default=None)):
     user_id = get_user_info(token, os.getenv("IS_LOCAL"))
-    books = await crud.read_all_books(user_id, pageSize, offset)
-    count = await crud.count_books(user_id)
+    books = await crud_book.read_all_books(user_id, pageSize, offset)
+    authors = await crud_author.read_authors(user_id)
+    books = reshape_book(books, authors)
+    count = await crud_book.count_books(user_id)
     return dict(
         data=dict(
             books=books,
@@ -25,10 +38,8 @@ async def read_books(pageSize: int = 3, offset: int = 0, token: str = Header(def
 
 async def read_book(isbn: int, token: str = Header(default=None)) -> Union[schema.BookReadResponse, None]:
     _ = get_user_info(token, os.getenv("IS_LOCAL"))
-    # return schema.Book(**body.dict(), author="author1", publisher="publisher1", title="title1")
     return await crud.read_book(isbn)
 
 
 async def create_book(body: schema.BookCreate):
-    # return schema.BookCreateResponse(**body.dict())
     return await crud.create_book(body)
