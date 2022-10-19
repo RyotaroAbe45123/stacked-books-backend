@@ -47,18 +47,23 @@ class Book:
         except KeyError:
             self.pages = 0
 
-        for i, j in enumerate(data["onix"]["DescriptiveDetail"]["Subject"]):
-            try:
-                code = j["SubjectCode"]
-                if (len(code) == 4):
-                    self.c_code = j["SubjectCode"]
-                elif (len(code) == 2):
-                    self.category_code = j["SubjectCode"]
-                else:
-                    print("key Error")
-            except KeyError:
-                self.subjects = j["SubjectHeadingText"]
-                self.subjects = self.search_subjects(self.subjects)
+        try:
+            subjects = data["onix"]["DescriptiveDetail"]["Subject"]
+            for i, j in enumerate(subjects):
+                try:
+                    code = j["SubjectCode"]
+                    if (len(code) == 4):
+                        self.c_code = j["SubjectCode"]
+                    elif (len(code) == 2):
+                        self.category_code = j["SubjectCode"]
+                    else:
+                        print("key Error")
+                except KeyError:
+                    self.subjects = j["SubjectHeadingText"]
+                    self.subjects = self.search_subjects(self.subjects)
+        except KeyError:
+            pass
+
 
         try:
             self.has_image = bool(data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"])
@@ -67,8 +72,11 @@ class Book:
 
         self.publisher = data["onix"]["PublishingDetail"]["Imprint"]["ImprintName"]
         self.publisher = self.remove_space(self.publisher)
-        self.publish_date = data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"]
+        self.publish_date = data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"] if data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"] else None
 
-        self.price = data["onix"]["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+        try:
+            self.price = data["onix"]["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+        except KeyError:
+            pass
 
         self.cover = data["summary"]["cover"]
