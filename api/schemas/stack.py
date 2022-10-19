@@ -7,15 +7,15 @@ class StackBase(BaseModel):
     isbn: int
 
 
-class StacksReadResponse(BaseModel):
-    timestamp: datetime
-    title: str
-    price: int
-    pages: int
-
-
 class StackReadResponse(StackBase):
     timestamp: datetime
+    title: str
+    price: Union[int, None]
+    pages: Union[int, None]
+
+
+class StacksReadResponse(StackReadResponse):
+    pass
 
 
 class StackCreate(StackBase):
