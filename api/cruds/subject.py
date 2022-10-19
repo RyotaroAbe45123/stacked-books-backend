@@ -6,13 +6,14 @@ import api.schemas.subject as schema
 from ..database import get_async_connection
 
 
-async def read_subjects(isbn: int) -> Union[List[schema.SubjectBase], List[None]]:
+async def read_subjects(isbn: int) -> Union[List[schema.SubjectBase], List]:
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.SubjectBase)) as acur:
             await acur.execute(
-                "SELECT subject FROM Subjects Where Subjects.ISBN = %s",
+                "SELECT keyword FROM Subjects Where Subjects.ISBN = %s",
                 (isbn,)
             )
+            return await acur.fetchall()
             obj = await acur.fetchall()
             return obj
 
