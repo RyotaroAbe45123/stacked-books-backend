@@ -8,11 +8,11 @@ class BookBase(BaseModel):
 
 
 class BooksReadResponse(BookBase):
-    price: int
-    pages: int
-    author: str
+    price: Union[int, None]
+    pages: Union[int, None]
     publisher: str
     title: str
+    has_image: bool
 
 class AllBooksReadResponse(BaseModel):
     data: dict
@@ -30,7 +30,7 @@ class BookCreate(BookBase):
 
 class BookReadResponse(BookCreate):
     authors: Union[List[str], None]
-    subjects: Union[List[str], None]
+    # subjects: Union[List[str], None]
 
 
 class BookCreateResponse(BookCreate):

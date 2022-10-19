@@ -31,24 +31,39 @@ class Book:
             subject_list = subject_list[0].split(";")
         return [subject for subject in subject_list]
 
+    def remove_space(self, keyword: str) -> str:
+        return "".join(keyword.split())
 
     def extract_info(self, data: dict):
         self.title = data["onix"]["DescriptiveDetail"]["TitleDetail"]["TitleElement"]["TitleText"]["content"]
+        self.title = self.remove_space(self.title)
 
         self.authors = data["onix"]["DescriptiveDetail"]["Contributor"]
         self.authors = [author["PersonName"]["content"] for author in self.authors]
-        self.authors = ["".join(author.split()) for author in self.authors]
+        self.authors = [self.remove_space(author) for author in self.authors]
 
-        self.pages = data["onix"]["DescriptiveDetail"]["Extent"][0]["ExtentValue"]
+        try:
+            self.pages = data["onix"]["DescriptiveDetail"]["Extent"][0]["ExtentValue"]
+        except KeyError:
+            self.pages = 0
 
-        for i, j in enumerate(data["onix"]["DescriptiveDetail"]["Subject"]):
-            if i == 0:
-                self.c_code = j["SubjectCode"]
-            elif i == 1:
-                self.category_code = j["SubjectCode"]
-            elif i == 2:
-                self.subjects = j["SubjectHeadingText"]
-                self.subjects = self.search_subjects(self.subjects)
+        try:
+            subjects = data["onix"]["DescriptiveDetail"]["Subject"]
+            for i, j in enumerate(subjects):
+                try:
+                    code = j["SubjectCode"]
+                    if (len(code) == 4):
+                        self.c_code = j["SubjectCode"]
+                    elif (len(code) == 2):
+                        self.category_code = j["SubjectCode"]
+                    else:
+                        print("key Error")
+                except KeyError:
+                    self.subjects = j["SubjectHeadingText"]
+                    self.subjects = self.search_subjects(self.subjects)
+        except KeyError:
+            pass
+
 
         try:
             self.has_image = bool(data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"])
@@ -56,8 +71,12 @@ class Book:
             self.has_image = False
 
         self.publisher = data["onix"]["PublishingDetail"]["Imprint"]["ImprintName"]
-        self.publish_date = data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"]
+        self.publisher = self.remove_space(self.publisher)
+        self.publish_date = data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"] if data["onix"]["PublishingDetail"]["PublishingDate"][0]["Date"] else None
 
-        self.price = data["onix"]["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+        try:
+            self.price = data["onix"]["ProductSupply"]["SupplyDetail"]["Price"][0]["PriceAmount"]
+        except KeyError:
+            pass
 
         self.cover = data["summary"]["cover"]
