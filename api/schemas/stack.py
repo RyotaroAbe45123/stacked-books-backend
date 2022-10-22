@@ -9,13 +9,12 @@ class StackBase(BaseModel):
 
 class StackReadResponse(StackBase):
     timestamp: datetime
-    title: str
-    price: Union[int, None]
-    pages: Union[int, None]
 
 
 class StacksReadResponse(StackReadResponse):
-    pass
+    title: str
+    price: Union[int, None]
+    pages: Union[int, None]
 
 
 class StackCreate(StackBase):
