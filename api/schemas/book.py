@@ -21,8 +21,8 @@ class AllBooksReadResponse(BaseModel):
 class BookCreate(BookBase):
     title: str
     pages: int
-    c_code: int
-    category_code: Union[int, None]
+    c_code: Union[str, None]
+    category_code: Union[str, None]
     has_image: bool
     publisher: str
     publish_date: date

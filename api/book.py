@@ -51,7 +51,8 @@ class Book:
             subjects = data["onix"]["DescriptiveDetail"]["Subject"]
             for i, j in enumerate(subjects):
                 try:
-                    code = j["SubjectCode"]
+                    code = str(j["SubjectCode"])
+                    print(code)
                     if (len(code) == 4):
                         self.c_code = j["SubjectCode"]
                     elif (len(code) == 2):
