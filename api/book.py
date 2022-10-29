@@ -45,13 +45,13 @@ class Book:
         try:
             self.pages = data["onix"]["DescriptiveDetail"]["Extent"][0]["ExtentValue"]
         except KeyError:
-            self.pages = 0
+            pass
 
         try:
             subjects = data["onix"]["DescriptiveDetail"]["Subject"]
             for i, j in enumerate(subjects):
                 try:
-                    code = j["SubjectCode"]
+                    code = str(j["SubjectCode"])
                     if (len(code) == 4):
                         self.c_code = j["SubjectCode"]
                     elif (len(code) == 2):

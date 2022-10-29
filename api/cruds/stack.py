@@ -12,7 +12,7 @@ async def read_all_stacks(user_id: int) -> Union[List[schema.StacksReadResponse]
     async with await get_async_connection() as aconn:
         async with aconn.cursor(row_factory=class_row(schema.StacksReadResponse)) as acur:
             await acur.execute(
-                "SELECT s.isbn, timestamp, title, price, pages \
+                "SELECT s.isbn, timestamp, title, price, pages, c_code \
                     FROM Stacks AS S \
                         LEFT JOIN Books AS B ON S.ISBN = B.ISBN \
                             WHERE S.UserId = %s \

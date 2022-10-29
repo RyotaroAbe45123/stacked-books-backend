@@ -15,6 +15,7 @@ class StacksReadResponse(StackReadResponse):
     title: str
     price: Union[int, None]
     pages: Union[int, None]
+    c_code: Union[str, None]
 
 
 class StackCreate(StackBase):
