@@ -45,7 +45,7 @@ class Book:
         try:
             self.pages = data["onix"]["DescriptiveDetail"]["Extent"][0]["ExtentValue"]
         except KeyError:
-            self.pages = 0
+            pass
 
         try:
             subjects = data["onix"]["DescriptiveDetail"]["Subject"]
