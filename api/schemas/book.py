@@ -10,6 +10,7 @@ class BookBase(BaseModel):
 class BooksReadResponse(BookBase):
     price: Union[int, None]
     pages: Union[int, None]
+    c_code: Union[str, None]
     publisher: str
     title: str
     has_image: bool
