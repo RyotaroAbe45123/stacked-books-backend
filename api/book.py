@@ -64,7 +64,6 @@ class Book:
         except KeyError:
             pass
 
-
         try:
             self.has_image = bool(data["onix"]["CollateralDetail"]["SupportingResource"][0]["ResourceVersion"][0]["ResourceLink"])
         except KeyError:
