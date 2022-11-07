@@ -16,7 +16,7 @@ class BookCreate(BookBase):
     category_code: Union[str, None]
     has_image: bool
     publisher: str
-    publish_date: date
+    publish_date: Union[date, None]
     price: Union[int, None]
 
 class BooksReadResponse(BookCreate):
